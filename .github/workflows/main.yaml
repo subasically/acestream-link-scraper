@@ -41,7 +41,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: subasically/acestream-link-scraper:${{ github.sha }}
+          tags: subasically/acestream-link-scraper:latest
 
       - name: Push git tag
         if: github.event_name == 'release'
