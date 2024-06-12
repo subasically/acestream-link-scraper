@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  acestream-updater:
+    build: .
+    environment:
+      - UPDATE_INTERVAL=3600  # Time in seconds between updates (default: 1 hour)
+      - SERVER_IP=10.10.10.5:32768  # Default server IP
+      - SEARCH_QUERIES=sport,sky,f1  # Default search queries
+    # env_file: # comment out to use env file
+    #   - .env
+    volumes:
+      - ./output:/usr/src/app/output  # Mount the output directory to the host
