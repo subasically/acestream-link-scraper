@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import time
 import os
 
+
 def collect_acestream_ids(search_query):
     print(f"Search for {search_query}")
     url = f"https://acestreamsearch.net/en/?q={search_query}"
@@ -48,6 +49,7 @@ def generate_m3u8_file(acestream_data, filename, server_ip):
             f.write(f"{base_url}{acestream_id}\n")
 
 def main():
+    print("AceStream Link Scraper starting...")
     search_queries = os.getenv('SEARCH_QUERIES', 'sport,sky,f1').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 3600))  # Default to 1 hour
     server_ip = os.getenv('SERVER_IP', '10.10.10.5:32768')  # Default IP
