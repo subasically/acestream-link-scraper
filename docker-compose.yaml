@@ -1,5 +1,11 @@
 services:
-  acestream-link-scraper:
+  http-proxy:
+    image: ghcr.io/martinbjeldbak/acestream-http-proxy
+    ports:
+      - '6878:80'
+  link-scraper:
+    depends_on:
+      - http-proxy
     image: subasically/acestream-link-scraper
     # build:
     #   context: .
@@ -12,7 +18,3 @@ services:
     #   - .env
     volumes:
       - /home/directory/:/usr/src/app/output  # Mount the output directory to the host
-  acestream-http-proxy:
-    image: ghcr.io/martinbjeldbak/acestream-http-proxy
-    ports:
-      - '6878:80'

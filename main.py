@@ -36,7 +36,7 @@ def test_acestream_link(acestream_id, server_ip, timeout=10):
                 print(f"Failed: {acestream_id}, Status code: {response.status_code}")
         except requests.RequestException as e:
             print(f"Failed: {acestream_id}, Exception: {e}")
-        time.sleep(1)  # Optional: Wait a bit before retrying
+        time.sleep(5)  # Optional: Wait a bit before retrying
     return False
 
 # Define the function to generate the .m3u8 file
@@ -52,7 +52,7 @@ def main():
     print("AceStream Link Scraper starting...")
     search_queries = os.getenv('SEARCH_QUERIES', 'sport,sky,f1').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 3600))  # Default to 1 hour
-    server_ip = os.getenv('SERVER_IP', '10.10.10.5:32768')  # Default IP
+    server_ip = os.getenv('SERVER_IP', '10.10.10.5:6768')  # Default IP
 
     while True:
         all_acestream_data = []
