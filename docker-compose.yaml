@@ -1,13 +1,15 @@
-version: '3.8'
-
 services:
   acestream-link-scraper:
-    build: .
+    image: subasically/acestream-link-scraper
     environment:
       - UPDATE_INTERVAL=3600  # Time in seconds between updates (default: 1 hour)
-      - SERVER_IP=10.10.10.5:32768  # Default server IP
+      - SERVER_IP=10.10.10.5:6878  # Default server IP
       - SEARCH_QUERIES=sport,sky,f1  # Default search queries
     # env_file: # comment out to use env file
     #   - .env
     volumes:
-      - ./output:/usr/src/app/output  # Mount the output directory to the host
+      - /home/directory/:/usr/src/app/output  # Mount the output directory to the host
+  acestream-http-proxy:
+    image: ghcr.io/martinbjeldbak/acestream-http-proxy
+    ports:
+      - '6878:80'
