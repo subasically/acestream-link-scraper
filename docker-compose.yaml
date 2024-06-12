@@ -1,6 +1,9 @@
 services:
   acestream-link-scraper:
     image: subasically/acestream-link-scraper
+    # build:
+    #   context: .
+    #   dockerfile: ./Dockerfile
     environment:
       - UPDATE_INTERVAL=3600  # Time in seconds between updates (default: 1 hour)
       - SERVER_IP=10.10.10.5:6878  # Default server IP
