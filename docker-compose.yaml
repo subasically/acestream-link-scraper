@@ -7,14 +7,12 @@ services:
     depends_on:
       - http-proxy
     image: subasically/acestream-link-scraper
-    # build:
-    #   context: .
-    #   dockerfile: ./Dockerfile
     environment:
-      - UPDATE_INTERVAL=3600  # Time in seconds between updates (default: 1 hour)
-      - SERVER_IP=10.10.10.5:6878  # Default server IP
+      - UPDATE_INTERVAL=360  # Time in minutes between updates (default: 6 hours)
+      - SERVER_IP=localhost:32768  # Default server IP
       - SEARCH_QUERIES=sport,sky,f1  # Default search queries
-    # env_file: # comment out to use env file
-    #   - .env
+      - OUTPUT_FILENAME=playlist/output.m3u8  # Default output filename
+      - TEST_DELAY=5  # Default delay between tests in seconds
+      - TIMEOUT=10  # Default timeout for testing links in seconds
     volumes:
-      - /home/directory/:/usr/src/app/output  # Mount the output directory to the host
+      - /home/directory/:/usr/src/app/playlist # Change home directory to your local directory
