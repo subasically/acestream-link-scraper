@@ -9,7 +9,7 @@ services:
     image: subasically/acestream-link-scraper
     environment:
       - UPDATE_INTERVAL=360  # Time in minutes between updates (default: 6 hours)
-      - SERVER_IP=localhost:32768  # Default server IP
+      - SERVER_IP=localhost:6878  # Default server IP
       - SEARCH_QUERIES=sport,sky,f1  # Default search queries
       - OUTPUT_FILENAME=playlist/output.m3u8  # Default output filename
       - TEST_DELAY=5  # Default delay between tests in seconds
