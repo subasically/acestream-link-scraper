@@ -1,53 +1,66 @@
-[![Publish to Docker Hub](https://github.com/subasically/acestream-link-scraper/actions/workflows/main.yaml/badge.svg)](https://github.com/subasically/acestream-link-scraper/actions/workflows/main.yaml)
-
 # AceStream Link Scraper
 
-The AceStream Link Scraper is a Python script that collects AceStream IDs based on search queries and generates an `.m3u8` playlist file. It periodically tests the working status of AceStream links and updates the playlist.
+AceStream Link Scraper is a Python-based tool that scrapes AceStream links from a specified website, tests the validity of each link, and generates an M3U8 playlist file. This tool is packaged in a Docker container and can be configured using environment variables.
+
+## Features
+
+- Scrapes AceStream links from a specified search website.
+- Tests each AceStream link to ensure it's working.
+- Generates an M3U8 playlist file with valid AceStream links.
+- Configurable through environment variables for flexible usage.
+- Packaged in a Docker container for easy deployment.
+
+## Requirements
+
+- Docker
+- Docker Compose
+
+## Environment Variables
+
+- `UPDATE_INTERVAL`: Interval (in minutes) between updates (default: 360 minutes / 6 hours).
+- `SERVER_IP`: The server IP for testing AceStream links (default: `10.10.10.5:32768`).
+- `SEARCH_QUERIES`: Comma-separated list of search queries (default: `sport,sky,f1`).
+- `OUTPUT_FILENAME`: The name of the output M3U8 file (default: `playlist/output.m3u8`).
+- `TEST_DELAY`: Delay (in seconds) between testing each link (default: 5 seconds).
+- `TIMEOUT`: Timeout (in seconds) for testing each link (default: 10 seconds).
 
 ## Usage
 
-1. **Install the required dependencies**:
-   ```bash
-   pip install requests beautifulsoup4
-   ```
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/subasically/acestream-link-scraper.git
+    cd acestream-link-scraper
+    ```
 
-2. **Set environment variables**:
-   - `SEARCH_QUERIES`: Comma-separated search queries (e.g., "sport,sky,f1").
-   - `UPDATE_INTERVAL`: Update interval in seconds (default: 3600 seconds).
-   - `SERVER_IP`: AceStream server IP and port (default: "10.10.10.5:32768").
+2. **Build the Docker image**:
+    ```bash
+    docker-compose build
+    ```
 
-3. **Run the script**:
-   ```bash
-   python acestream_playlist.py
-   ```
+3. **Run the Docker container**
+    ```bash
+    docker-compose up
+    ```
 
-The generated `.m3u8` playlist will be saved in the `output` directory.
-
-## Quick Start
-
-Using Docker Compose is a three-step process:
-1. Define your app's environment with a `Dockerfile` so it can be reproduced anywhere.
-2. Define the services that make up your app in `compose.yaml` so they can be run together in an isolated environment.
-3. Run `docker compose up`, and Compose will start and run your entire app.
-
-A sample `compose.yaml` file looks like this:
+## Compose
 
 ```yaml
 services:
-  web:
-    build: .
+  http-proxy:
+    image: ghcr.io/martinbjeldbak/acestream-http-proxy
     ports:
-      - "5000:5000"
+      - '6878:80'
+  link-scraper:
+    depends_on:
+      - http-proxy
+    image: subasically/acestream-link-scraper
+    environment:
+      - UPDATE_INTERVAL=360  # Time in minutes between updates (default: 6 hours)
+      - SERVER_IP=10.10.10.5:32768  # Default server IP
+      - SEARCH_QUERIES=sport,sky,f1  # Default search queries
+      - OUTPUT_FILENAME=playlist/output.m3u8  # Default output filename
+      - TEST_DELAY=5  # Default delay between tests in seconds
+      - TIMEOUT=10  # Default timeout for testing links in seconds
     volumes:
-      - .:/code
-  redis:
-    image: redis
+      - /home/directory/:/usr/src/app/playlist # Change home directory to your local directory
 ```
-
-## Contributing
-
-Want to help develop Docker Compose? Check out our [contributing documentation](https://github.com/docker/compose/blob/v2/CONTRIBUTING.md). If you find an issue, please report it on the [issue tracker](https://github.com/docker/compose/issues).
-
----
-
-Feel free to customize the script and adapt it to your requirements! If you have any questions or need further assistance, feel free to ask. 😊🐳
