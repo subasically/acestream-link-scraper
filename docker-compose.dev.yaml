@@ -1,0 +1,14 @@
+services:
+  server:
+    image: ghcr.io/martinbjeldbak/acestream-http-proxy
+    platform: linux/amd64
+    ports:
+      - '6878:80'
+  app:
+    depends_on:
+      - server
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./playlist:/usr/src/app/playlist  # Mount the playlist directory to the host
