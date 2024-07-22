@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Waiting for 15 seconds before starting the health check..."
-sleep 60
+sleep 15
 
 # Loop until the health check succeeds
 while true; do
