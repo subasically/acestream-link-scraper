@@ -27,27 +27,27 @@ def collect_acestream_ids(search_query):
     return acestream_links
 
 # Define the function to test if an AceStream link works with timeout and delay
-def test_acestream_link(acestream_id, server_ip, timeout, delay):
-    print(f"Testing {acestream_id}")
+def test_acestream_link(acestream_id, acestream_title, server_ip, timeout, delay):
+    print(f"Testing {acestream_title}")
     test_url = f"http://{server_ip}/ace/manifest.m3u8?id={acestream_id}"
-    print(f"Testing URL:\n{test_url}")
+    print(f"URL: {test_url}")
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
             response = requests.get(test_url, timeout=timeout)
             if response.status_code == 200:
-                print(f"{test_url} is ✅")
+                print(f"{acestream_title} is ✅\n")
                 return True
             else:
-                print(f"❌Failed: {acestream_id}\nStatus code:\n{response.status_code}")
+                print(f"❌ConnectionError: {acestream_title}\nStatus code:\n{response.status_code}")
         except requests.RequestException as e:
-            print(f"❌Failed: {acestream_id}\nException:\n{e}")
+            print(f"❌RequestException: {acestream_title}\nException:\n{e}")
         time.sleep(delay)
     return False
 
 # Define the function to generate the .m3u8 file
 def generate_m3u8_file(acestream_data, filename, server_ip):
-    base_url = f"http://{server_ip}/ace/manifest.m3u8?id="
+    base_url = f"http://{server_ip}/ace/getstream?id="
     with open(filename, 'w') as f:
         f.write("#EXTM3U\n")
         for acestream_id, text_content in acestream_data:
@@ -55,7 +55,13 @@ def generate_m3u8_file(acestream_data, filename, server_ip):
             f.write(f"{base_url}{acestream_id}\n")
 
 def main():
-    search_queries = os.getenv('SEARCH_QUERIES', 'sport,sky,f1').split(',')
+    print("\n")
+    print("*" * 50)
+    print("*** Starting AceStream playlist generator...")
+    print("*" * 50)
+    print("\n\n")
+    
+    search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK], DAZN').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 360)) * 60  # Default to 6 hours (converted to seconds)
     server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')  # Default IP
     output_filename = os.getenv('OUTPUT_FILENAME', 'playlist/output.m3u8')  # Default output filename
@@ -70,13 +76,13 @@ def main():
 
         all_acestream_data.sort(key=lambda x: x[1])
 
-        print(f"Found {len(all_acestream_data)} links. Estimated time to test: {len(all_acestream_data) * test_delay} seconds.")
+        print(f"\nFound {len(all_acestream_data)} links. Estimated time to test: {len(all_acestream_data) * test_delay} seconds.\n")
 
-        working_acestream_data = [data for data in all_acestream_data if test_acestream_link(data[0], server_ip, timeout, test_delay)]
+        working_acestream_data = [data for data in all_acestream_data if test_acestream_link(data[0], data[1], server_ip, timeout, test_delay)]
 
         generate_m3u8_file(working_acestream_data, output_filename, server_ip)
 
-        print(f"Generated {output_filename} with {len(working_acestream_data)} entries.")
+        print(f"\nGenerated {output_filename} with {len(working_acestream_data)} entries.\n")
         
         time.sleep(update_interval)
 

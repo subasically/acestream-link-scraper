@@ -1,17 +1,22 @@
-# Use an official Python runtime as a parent image
-FROM python:3.10-slim
+FROM python:3.8-slim
 
-# Set the working directory in the container
+# Install dependencies
+RUN apt-get update && apt-get install -y curl jq
+
+# Set the working directory
 WORKDIR /usr/src/app
 
-# Copy the current directory contents into the container at /usr/src/app
+# Copy the entrypoint script
+COPY wait-for-acestream.sh .
+
+# Copy the rest of the application files
 COPY . .
 
-# Install any needed packages specified in requirements.txt
+# Install any Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
+# Ensure the entrypoint script is executable
+RUN chmod +x wait-for-acestream.sh
 
-# Run collect_acestream_links.py when the container launches
+# Set the default command
 CMD ["python", "main.py"]

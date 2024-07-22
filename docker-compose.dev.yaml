@@ -1,13 +1,26 @@
 services:
   server:
     image: ghcr.io/martinbjeldbak/acestream-http-proxy
+    container_name: acestream-http-proxy
     ports:
       - '6878:80'
+    env_file:
+      - .env
+
   app:
-    depends_on:
-      - server
     build: .
+    container_name: link-scraper
     env_file:
       - .env
     volumes:
-      - ./playlist:/usr/src/app/playlist  # Mount the playlist directory to the host
+      - ./playlist:/usr/src/app/playlist
+      - ./wait-for-acestream.sh:/usr/src/app/wait-for-acestream.sh
+    depends_on:
+      server:
+        condition: service_started
+    entrypoint:
+      [
+        "/usr/src/app/wait-for-acestream.sh",
+        "python",
+        "main.py"
+      ]
