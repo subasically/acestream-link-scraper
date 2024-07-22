@@ -1,12 +1,14 @@
 services:
-  http-proxy:
+  server:
     image: ghcr.io/martinbjeldbak/acestream-http-proxy
+    container_name: acestream-http-proxy
     ports:
       - '6878:80'
-  link-scraper:
+  app:
     depends_on:
       - http-proxy
     image: subasically/acestream-link-scraper
+    container_name: link-scraper
     environment:
       - UPDATE_INTERVAL=360 # Time in minutes between updates (default: 6 hours)
       - SERVER_IP=http-proxy:6878 # Default server IP
