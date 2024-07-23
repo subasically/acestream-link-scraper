@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Waiting for 10 seconds before starting the health check..."
-sleep 10
+echo "Waiting for 15 seconds before starting the health check..."
+sleep 15
 
 # Read SERVER_IP from environment variable
 SERVER_IP=${SERVER_IP:-server:6878}  # Default to 'server:6878' if not set
@@ -28,11 +28,4 @@ done
 
 # Run the main application
 echo "Starting main.py..."
-python /usr/src/app/main.py
-
-# Check if the application started
-if [[ $? -ne 0 ]]; then
-  echo "Error: main.py failed to start."
-else
-  echo "main.py started successfully."
-fi
+exec python /usr/src/app/main.py
