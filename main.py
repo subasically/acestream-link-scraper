@@ -24,15 +24,15 @@ def collect_acestream_ids(search_query):
     return acestream_links
 
 def test_acestream_link(acestream_id, acestream_title, server_ip, timeout, delay):
-    logging.info(f"Testing {acestream_title}")
+    # logging.info(f"Testing {acestream_title}")
     test_url = f"http://{server_ip}/ace/manifest.m3u8?id={acestream_id}"
-    logging.info(f"URL: {test_url}")
+    # logging.info(f"URL: {test_url}")
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
             response = requests.get(test_url, timeout=timeout)
             if response.status_code == 200:
-                logging.info(f"{acestream_title} is ✅")
+                logging.info(f"✅ {acestream_title} is working!")
                 return True
             else:
                 logging.warning(f"❌ ConnectionError: {acestream_title}, Status code: {response.status_code}")
@@ -43,11 +43,17 @@ def test_acestream_link(acestream_id, acestream_title, server_ip, timeout, delay
 
 def generate_m3u8_file(acestream_data, filename, server_ip):
     base_url = f"http://{server_ip}/ace/getstream?id="
-    with open(filename, 'w') as f:
-        f.write("#EXTM3U\n")
+    existing_ids = set()
+    with open(filename, 'r') as f:
+        for line in f:
+            if line.startswith(base_url):
+                existing_ids.add(line.strip().replace(base_url, ''))
+    
+    with open(filename, 'a') as f:
         for acestream_id, text_content in acestream_data:
-            f.write(f"#EXTINF:-1,{text_content}\n")
-            f.write(f"{base_url}{acestream_id}\n")
+            if acestream_id not in existing_ids:
+                f.write(f"#EXTINF:-1,{text_content}\n")
+                f.write(f"{base_url}{acestream_id}\n")
 
 def check_acestream_version(server_ip):
     url = f"http://{server_ip}/webui/api/service?method=get_version"
@@ -61,22 +67,27 @@ def check_acestream_version(server_ip):
         return None
 
 def main():
+    logging.info("*" * 50)
     logging.info("Starting AceStream playlist generator...")
+    logging.info("*" * 50 + "\n")
     
-    search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK], DAZN').split(',')
+    search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK], DAZN, Eleven').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 360)) * 60
     server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')
     output_filename = os.getenv('OUTPUT_FILENAME', 'playlist/output.m3u8')
+    # create empty file
+    with open(output_filename, 'w') as f:
+        pass
     test_delay = int(os.getenv('TEST_DELAY', 5))
     timeout = int(os.getenv('TIMEOUT', 10))
 
     while True:
         version = check_acestream_version(server_ip)
         if version:
-            logging.info(f"AceStream is ready! Version: {version}")
+            logging.info(f"AceStream is ready! Version: {version} 🚀")
             break
         else:
-            logging.info("AceStream is not ready yet. Retrying in 5 seconds...")
+            logging.warning("AceStream is not ready yet. Retrying in 5 seconds...")
             time.sleep(5)
 
     while True:
