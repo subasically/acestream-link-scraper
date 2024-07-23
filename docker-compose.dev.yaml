@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   server:
     image: ghcr.io/martinbjeldbak/acestream-http-proxy
@@ -6,6 +8,8 @@ services:
       - '6878:80'
     env_file:
       - .env
+    networks:
+      - acestream-network
 
   app:
     build: .
@@ -14,8 +18,18 @@ services:
       - .env
     volumes:
       - ./playlist:/usr/src/app/playlist
-      - ./wait-for-acestream.sh:/usr/src/app/wait-for-acestream.sh
     depends_on:
-      server:
-        condition: service_started
-    entrypoint: [ "/usr/src/app/wait-for-acestream.sh" ]
+      - server
+    entrypoint:
+      [
+        "/usr/src/app/wait-for-acestream.sh",
+        "server:80",
+        "python",
+        "main.py"
+      ]
+    networks:
+      - acestream-network
+
+networks:
+  acestream-network:
+    driver: bridge

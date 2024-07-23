@@ -1,4 +1,5 @@
-FROM python:3.8-slim
+# Use the official Python image from the Docker Hub
+FROM python:3.10-slim
 
 WORKDIR /usr/src/app
 
