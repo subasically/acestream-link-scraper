@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo "Waiting for 15 seconds before starting the health check..."
+# wait-for-acestream.sh
+
+echo "Waiting for AceStream to start..."
 sleep 15
 
 set -e
@@ -14,6 +16,5 @@ until curl -s "http://$host/webui/api/service?method=get_version" > /dev/null; d
   sleep 1
 done
 
-# Run the main application
-echo "Starting main.py..."
-exec python /usr/src/app/main.py
+>&2 echo "AceStream is up - executing command"
+exec $cmd
