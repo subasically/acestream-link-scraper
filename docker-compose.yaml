@@ -4,37 +4,31 @@ services:
     container_name: acestream-http-proxy
     ports:
       - "6878:80"
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-f",
-          "http://127.0.0.1:6878/webui/api/service?method=get_version"
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   app:
     depends_on:
-      server:
-        condition: service_healthy
+      - server
     image: subasically/acestream-link-scraper
-    container_name: link-scraper
+    container_name: acestream-link-scraper
     environment:
       - UPDATE_INTERVAL=360 # Time in minutes between updates (default: 6 hours)
       - SERVER_IP=server:6878 # Default server IP
       - SEARCH_QUERIES=[UK],[US],DAZN # Default search queries
-      - OUTPUT_FILENAME=playlist/acestream.m3u8 # Default output filename
+      - OUTPUT_FILENAME=playlist/output.m3u8 # Default output filename
       - TEST_DELAY=5 # Default delay between tests in seconds
       - TIMEOUT=10 # Default timeout for testing links in seconds
       - TZ=America/Chicago # Replace with your desired timezone
       - MAX_RETRIES=30
       - RETRY_INTERVAL=5
     volumes:
-      - /home/directory/:/usr/src/app/playlist # Change home directory to your local directory
-    entrypoint: [ "/usr/src/app/wait-for-acestream.sh" ]
+      - /appdata/acestream-http-proxy/:/usr/src/app/playlist # Change home directory to your local directory
+    entrypoint:
+      [
+        "/usr/src/app/wait-for-acestream.sh",
+        "server:80",
+        "python",
+        "main.py"
+      ]
     networks:
       - default
 
