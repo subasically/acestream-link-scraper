@@ -49,16 +49,16 @@ def generate_m3u8_file(acestream_data, filename, server_ip):
             f.write(f"#EXTINF:-1,{text_content}\n")
             f.write(f"{base_url}{acestream_id}\n")
 
-# def check_acestream_version(server_ip):
-#     url = f"http://{server_ip}/webui/api/service?method=get_version"
-#     try:
-#         response = requests.get(url)
-#         response.raise_for_status()
-#         data = response.json()
-#         return data.get('result', {}).get('version')
-#     except requests.RequestException as e:
-#         logging.error(f"Error checking AceStream version: {e}")
-#         return None
+def check_acestream_version(server_ip):
+    url = f"http://{server_ip}/webui/api/service?method=get_version"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        return data.get('result', {}).get('version')
+    except requests.RequestException as e:
+        logging.error(f"Error checking AceStream version: {e}")
+        return None
 
 def main():
     logging.info("Starting AceStream playlist generator...")
@@ -70,14 +70,14 @@ def main():
     test_delay = int(os.getenv('TEST_DELAY', 5))
     timeout = int(os.getenv('TIMEOUT', 10))
 
-    # while True:
-    #     version = check_acestream_version(server_ip)
-    #     if version:
-    #         logging.info(f"AceStream is ready! Version: {version}")
-    #         break
-    #     else:
-    #         logging.info("AceStream is not ready yet. Retrying in 5 seconds...")
-    #         time.sleep(5)
+    while True:
+        version = check_acestream_version(server_ip)
+        if version:
+            logging.info(f"AceStream is ready! Version: {version}")
+            break
+        else:
+            logging.info("AceStream is not ready yet. Retrying in 5 seconds...")
+            time.sleep(5)
 
     while True:
         all_acestream_data = []
