@@ -96,6 +96,8 @@ def main():
         logging.info(f"Generated {output_filename} with {len(working_acestream_data)} entries.")
         
         time.sleep(update_interval)
+        
+        logging.info("Waiting for next update...")
 
 if __name__ == "__main__":
     main()
