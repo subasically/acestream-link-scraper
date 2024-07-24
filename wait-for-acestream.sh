@@ -3,7 +3,7 @@
 # wait-for-acestream.sh
 
 echo "Waiting for AceStream to start..."
-sleep 15
+sleep 5
 
 set -e
 
