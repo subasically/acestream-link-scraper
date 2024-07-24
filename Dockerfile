@@ -8,6 +8,9 @@ ENV PYTHONUNBUFFERED 1
 # Create a working directory
 WORKDIR /usr/src/app
 
+# Copy the rest of the application
+COPY . /usr/src/app/
+
 # Install curl and other dependencies
 RUN apt-get update && \
   apt-get install -y curl && \
@@ -15,14 +18,11 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 # Copy requirements.txt
-COPY requirements.txt /usr/src/app/
+# COPY requirements.txt /usr/src/app/
 
 # Install Python dependencies
 RUN pip install --upgrade pip && \
   pip install -r requirements.txt
-
-# Copy the rest of the application
-COPY . /usr/src/app/
 
 # Make wait-for-acestream.sh executable
 RUN chmod +x /usr/src/app/wait-for-acestream.sh

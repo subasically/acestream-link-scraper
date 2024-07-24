@@ -4,24 +4,24 @@ services:
     container_name: acestream-http-proxy
     ports:
       - "6878:80"
+    networks:
+      - acestream-network
 
   app:
-    depends_on:
-      - server
     image: subasically/acestream-link-scraper
     container_name: acestream-link-scraper
     environment:
-      - UPDATE_INTERVAL=60 # Time in minutes between updates (default: 6 hours)
-      - SERVER_IP=server:6878 # Default server IP
-      - SEARCH_QUERIES=[UK],[US],DAZN,Eleven # Default search queries
-      - PLAYLIST_FILENAME=output.m3u8 # Default output filename
-      - TEST_DELAY=1 # Default delay between tests in seconds
-      - TIMEOUT=10 # Default timeout for testing links in seconds
-      - TZ=America/Chicago # Replace with your desired timezone
+      - UPDATE_INTERVAL=60
+      - SERVER_IP=server:6878
+      - SEARCH_QUERIES=[UK],[US],DAZN,Eleven
+      - PLAYLIST_FILENAME=output.m3u8
+      - TEST_DELAY=1
+      - TIMEOUT=10
+      - TZ=America/Chicago
       - MAX_RETRIES=30
       - RETRY_INTERVAL=5
     volumes:
-      - /appdata/acestream-http-proxy/:/usr/src/app # Change home directory to your local directory
+      - /appdata/acestream-http-proxy:/usr/src/app
     entrypoint:
       [
         "/usr/src/app/wait-for-acestream.sh",
@@ -29,9 +29,11 @@ services:
         "python",
         "main.py"
       ]
+    depends_on:
+      - server
     networks:
-      - default
+      - acestream-network
 
 networks:
-  default:
+  acestream-network:
     driver: bridge

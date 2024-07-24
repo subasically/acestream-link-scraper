@@ -1,3 +1,2 @@
 .env
-/playlist
-index.html
+*.m3u8

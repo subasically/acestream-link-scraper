@@ -111,7 +111,7 @@ def main():
         generate_index_html(playlist)
         logging.info(f"Generated index.html for web player.\n")
         
-        logging.info(f"Waiting for {update_interval} seconds before next update...\n")
+        logging.info(f"Waiting for {update_interval /3600} hourse before next update...\n")
         time.sleep(update_interval)
 
 if __name__ == "__main__":
