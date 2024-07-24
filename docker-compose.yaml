@@ -13,4 +13,4 @@ services:
       - MAX_RETRIES=30
       - RETRY_INTERVAL=5
     volumes:
-      - /appdata/acestream-http-proxy:/usr/src/app
+      - /home/subasically/appdata/acestream-link-scraper:/usr/src/app

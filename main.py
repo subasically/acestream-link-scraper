@@ -6,23 +6,43 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-def check_server_version(url):
-    logging.info(f"Checking server version at {url}")
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        data = response.json()
-        # Assume the version is in a key named 'version'
-        version = data.get('version')
-        if version:
-            logging.info(f"acestream-http-proxy version is {version}")
-            return True
-        else:
-            logging.error("Version number not found in response")
-            return False
-    except requests.exceptions.RequestException as e:
-        logging.error(f"Error checking server version: {e}")
-        return False
+def check_server_version(server_ip, max_retries=30, timeout=5):
+    """
+    Check if the server version can be retrieved.
+
+    Args:
+        server_ip (str): The IP address of the server.
+        max_retries (int): The maximum number of retry attempts.
+        timeout (int): The timeout for each request in seconds.
+
+    Returns:
+        str: The server version if successful, None otherwise.
+    """
+    logging.info("Checking server version...")
+    for attempt in range(max_retries):
+        try:
+            version_check_url = f"http://{server_ip}/webui/api/service?method=get_version"
+            response = requests.get(version_check_url, timeout=timeout)
+            response.raise_for_status()  # Raise an exception for HTTP errors
+
+            # Assuming the server responds with JSON containing the version
+            version_data = response.json()
+            if 'result' in version_data and 'version' in version_data['result']:
+                version = version_data['result']['version']
+                logging.info(f"✅ Server is up and running on version: {version}")
+                return version
+            else:
+                logging.warning(f"❌ Version key not found in the 'result' key of the response: {version_data}")
+        except requests.RequestException as e:
+            logging.error(f"❌ Attempt {attempt + 1} of {max_retries}: Error fetching version")
+
+        # Wait before retrying
+        time.sleep(timeout)
+
+    logging.error("Failed to retrieve server version after maximum retries.")
+    return None
+
+
 
 def collect_acestream_ids(search_query):
     logging.info(f"Search for {search_query}")
@@ -97,15 +117,11 @@ def generate_index_html(filename):
         f.write(html_content)
     
 def main():
-    logging.info("\n" + "*" * 50)
+    time.sleep(10)  # Wait for the AceStream server to start
+    
+    logging.info("*" * 50)
     logging.info("Starting AceStream playlist generator...")
     logging.info("*" * 50 + "\n")
-    
-    # Check server version
-    version_check_url = f"http://{os.getenv('SERVER_IP', '10.10.10.5:6878')}/webui/api/service?method=get_version"
-    if not check_server_version(version_check_url):
-        logging.error("Server version check failed. Exiting...")
-        return
     
     search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK],DAZN,Eleven').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 360)) * 60
@@ -114,6 +130,11 @@ def main():
     test_delay = int(os.getenv('TEST_DELAY', 5))
     timeout = int(os.getenv('TIMEOUT', 10))
 
+    # Check server version
+    if not check_server_version(server_ip):
+        logging.error("Server version check failed. Exiting...")
+        return
+    
     while True:
         all_acestream_data = []
         for query in search_queries:
