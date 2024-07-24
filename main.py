@@ -80,18 +80,7 @@ def generate_index_html(filename):
 """
     with open("index.html", "w") as f:
         f.write(html_content)
-        
-def check_acestream_version(server_ip):
-    url = f"http://{server_ip}/webui/api/service?method=get_version"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        data = response.json()
-        return data.get('result', {}).get('version')
-    except requests.RequestException as e:
-        logging.error(f"Error checking AceStream version: {e}")
-        return None
-
+    
 def main():
     logging.info("*" * 50)
     logging.info("Starting AceStream playlist generator...")
