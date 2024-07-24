@@ -82,7 +82,7 @@ def generate_index_html(filename):
         f.write(html_content)
     
 def main():
-    logging.info("*" * 50)
+    logging.info("\n" + "*" * 50)
     logging.info("Starting AceStream playlist generator...")
     logging.info("*" * 50 + "\n")
     
@@ -106,10 +106,10 @@ def main():
         working_acestream_data = [data for data in all_acestream_data if test_acestream_link(data[0], data[1], server_ip, timeout, test_delay)]
 
         generate_m3u8_file(working_acestream_data, playlist, server_ip)
-        print(f"\nGenerated {playlist} with {len(working_acestream_data)} entries.")
+        logging.info(f"\nGenerated {playlist} with {len(working_acestream_data)} entries.")
         
         generate_index_html(playlist)
-        print(f"Generated index.html for web player.\n")
+        logging.info(f"Generated index.html for web player.\n")
         
         logging.info("Waiting for next update...")
         time.sleep(update_interval)
