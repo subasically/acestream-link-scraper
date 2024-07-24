@@ -11,7 +11,7 @@ shift
 cmd="$@"
 
 until curl -s "http://$host/webui/api/service?method=get_version" > /dev/null; do
-  >&2 echo "$(date '+%Y-%m-%d %H:%M:%S') - AceStream is unavailable - sleeping"
+  >&2 echo "$(date '+%Y-%m-%d %H:%M:%S') - AceStream is unavailable - http://$host/webui/api/service?method=get_version"
   sleep 5
 done
 
