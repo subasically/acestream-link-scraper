@@ -15,7 +15,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./playlist:/usr/src/app/playlist
+      - ./:/usr/src/app
     depends_on:
       - server
     entrypoint:

@@ -14,14 +14,14 @@ services:
       - UPDATE_INTERVAL=360 # Time in minutes between updates (default: 6 hours)
       - SERVER_IP=server:6878 # Default server IP
       - SEARCH_QUERIES=[UK],[US],DAZN # Default search queries
-      - PLAYLIST_FILENAME=playlist/output.m3u8 # Default output filename
+      - PLAYLIST_FILENAME=output.m3u8 # Default output filename
       - TEST_DELAY=5 # Default delay between tests in seconds
       - TIMEOUT=10 # Default timeout for testing links in seconds
       - TZ=America/Chicago # Replace with your desired timezone
       - MAX_RETRIES=30
       - RETRY_INTERVAL=5
     volumes:
-      - /appdata/acestream-http-proxy/:/usr/src/app/playlist # Change home directory to your local directory
+      - /appdata/acestream-http-proxy/:/usr/src/app # Change home directory to your local directory
     entrypoint:
       [
         "/usr/src/app/wait-for-acestream.sh",
