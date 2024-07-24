@@ -35,9 +35,9 @@ def test_acestream_link(acestream_id, acestream_title, server_ip, timeout, delay
                 logging.info(f"✅ {acestream_title} is working!")
                 return True
             else:
-                logging.warning(f"❌ ConnectionError: {acestream_title}, Status code: {response.status_code}")
+                logging.warning(f"❌ ConnectionError: {acestream_title}")
         except requests.RequestException as e:
-            logging.error(f"❌ RequestException: {acestream_title}, Exception: {e}")
+            logging.error(f"❌ RequestException: {acestream_title}")
         time.sleep(delay)
     return False
 
@@ -97,7 +97,7 @@ def main():
     logging.info("Starting AceStream playlist generator...")
     logging.info("*" * 50 + "\n")
     
-    search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK], DAZN, Eleven').split(',')
+    search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK],DAZN,Eleven').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 360)) * 60
     server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')
     output_filename = os.getenv('OUTPUT_FILENAME', 'playlist/output.m3u8')
