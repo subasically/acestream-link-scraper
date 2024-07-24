@@ -1,0 +1,56 @@
+#EXTINF:-1,BT Sport / ESPN [UK](9.2 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=fc5089d8e1519872fdf951779ccbca913acc9bce
+#EXTINF:-1,BT Sport 1 [UK](8.0 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=efc60cfe5e3a349baa02bcc49f6647c21a9c3c5b
+#EXTINF:-1,BT Sport 2 [UK](9.2 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=d63d8a57cf471394bfa9f619bbd68b01ae27a801
+#EXTINF:-1,BT Sport 3 [UK](2.3 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=5f966c123759de46dff29c379266b7a403452033
+#EXTINF:-1,DAZN 1 Bar HD [DE](13.3 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=897e73c9d578848f596585314ecb9ae067c0e229
+#EXTINF:-1,DAZN 2 Bar HD [DE](11.2 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=12ea555d431dbe51fc8e4ca745aec09fe22a4865
+#EXTINF:-1,DAZN1(6.4 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=d5b2c6b940cf3df5e8f9dc6f000f0ea23a10b151
+#EXTINF:-1,DAZN3(0.6 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=d1d9ec2361a6ac8edc0b2841866383768cc28df9
+#EXTINF:-1,ESPN HD [US](5.5 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=4b4907de51ec11087d4bed5876f2a0c68264f442
+#EXTINF:-1,Eleven Sports 1 HD [PL](6.7 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=14407b00d454cb7dc0d70aa26e8bbc554f457f00
+#EXTINF:-1,Eleven Sports 1 [BE](3.0 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=36cad67fed5a739757a9db844a551aa845a8d51b
+#EXTINF:-1,Eleven Sports 2 HD [PL](7.6 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=54a4a28882d3cae1ca19de5d4b022ebea40351f9
+#EXTINF:-1,Eleven Sports 2 [BE](5.1 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=d08013df6e437a1fdf1e0c34f573fdf6a40c7fce
+#EXTINF:-1,Eleven Sports 3 HD [PL](7.1 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=b146ee4b6e16c9df58e27bd02ffd6cea840ff212
+#EXTINF:-1,Eleven Sports 3 [BE](8.3 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=dae7d1251f069516cc0a9c8f15f6639d2a17df1e
+#EXTINF:-1,Eleven Sports 4 HD [PL](7.1 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=458a0ddd7d193f6d2750cd14d03a47f47a808e09
+#EXTINF:-1,Eleven Sports 4 [BE](2.1 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=0f32c0131a2d9444996410801f4e18b04384db98
+#EXTINF:-1,Eleven Sports 5 [BE](4.2 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=4dbe63b44fc4f439f5b634c0d2aa7e0cccad808a
+#EXTINF:-1,FOX Sports 1 HD [US](3.7 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=c9c062941fbecb16ce29437f346ea7177d720898
+#EXTINF:-1,FOX Sports 2 HD [US](3.6 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=cba8d369eac629b577750edb90370cd1c5fb03b7
+#EXTINF:-1,NBA TV [US](3.5 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=e72d03fb9694164317260f684470be9ab781ed95
+#EXTINF:-1,Premier Sports 1 [UK](1.7 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=75a56863b6fe0407ad4305b4d7ee5643c3923565
+#EXTINF:-1,Premier Sports 2 [UK](6.8 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=4903ca695edb64bc72ae29eb85a5333ba0139537
+#EXTINF:-1,Sky Sports Arena [UK](6.8 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=d317a003e8047da2c36a2a2bb2289578c9a3b79c
+#EXTINF:-1,Sky Sports Cricket [UK](4.8 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=6d95e4b0893e155cc674b84e0763150c445d3ddd
+#EXTINF:-1,Sky Sports Football [UK](5.5 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=8dbe2d515e9131fa311353537736f8c94be9b26d
+#EXTINF:-1,Sky Sports Main Event [UK](4.3 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=eab7aeef0218ce8b0752e596e4792b69eda4df5e
+#EXTINF:-1,SkySP PL [UK](7.3 Mbps)
+http://10.10.10.5:6878/ace/getstream?id=ec5eabe0144ccfffc337e1d6708e2afb81d0638e

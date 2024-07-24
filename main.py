@@ -2,10 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import os
-import json
 import logging
 
-# Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def collect_acestream_ids(search_query):
@@ -37,12 +35,15 @@ def test_acestream_link(acestream_id, acestream_title, server_ip, timeout, delay
             else:
                 logging.warning(f"❌ ConnectionError: {acestream_title}")
         except requests.RequestException as e:
-            logging.error(f"❌ RequestException: {acestream_title}")
+            logging.error(f"❌ Exception: {acestream_title}")
         time.sleep(delay)
     return False
 
 def generate_m3u8_file(acestream_data, filename, server_ip):
     base_url = f"http://{server_ip}/ace/getstream?id="
+    # create empty file
+    with open(filename, 'w') as f:
+        pass
     existing_ids = set()
     with open(filename, 'r') as f:
         for line in f:
@@ -55,29 +56,28 @@ def generate_m3u8_file(acestream_data, filename, server_ip):
                 f.write(f"#EXTINF:-1,{text_content}\n")
                 f.write(f"{base_url}{acestream_id}\n")
 
-# Define the function to generate the index.html file
 def generate_index_html(filename):
     html_content = f"""<!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>HLS Video Player</title>
-                    <link href="https://vjs.zencdn.net/7.14.3/video-js.css" rel="stylesheet">
-                    <script src="https://vjs.zencdn.net/7.14.3/video.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>
-                    </head>
-                    <body>
-                    <video id="hls-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360">
-                        <source src="{filename}" type="application/x-mpegURL">
-                    </video>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HLS Video Player</title>
+<link href="https://vjs.zencdn.net/7.14.3/video-js.css" rel="stylesheet">
+<script src="https://vjs.zencdn.net/7.14.3/video.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>
+</head>
+<body>
+<video id="hls-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360">
+    <source src="{filename}" type="application/x-mpegURL">
+</video>
 
-                    <script>
-                        var player = videojs('hls-video');
-                    </script>
-                    </body>
-                    </html>
-                    """
+<script>
+    var player = videojs('hls-video');
+</script>
+</body>
+</html>
+"""
     with open("index.html", "w") as f:
         f.write(html_content)
         
@@ -100,10 +100,7 @@ def main():
     search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK],DAZN,Eleven').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 360)) * 60
     server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')
-    output_filename = os.getenv('OUTPUT_FILENAME', 'playlist/output.m3u8')
-    # create empty file
-    with open(output_filename, 'w') as f:
-        pass
+    playlist = os.getenv('PLAYLIST_FILENAME', 'output.m3u8')
     test_delay = int(os.getenv('TEST_DELAY', 5))
     timeout = int(os.getenv('TIMEOUT', 10))
 
@@ -124,15 +121,15 @@ def main():
 
         all_acestream_data.sort(key=lambda x: x[1])
 
-        logging.info(f"Found {len(all_acestream_data)} links. Estimated time to test: {len(all_acestream_data) * test_delay} seconds.")
+        logging.info(f"Found {len(all_acestream_data)} links. Estimated time to test: {len(all_acestream_data) * test_delay} seconds.\n")
 
         working_acestream_data = [data for data in all_acestream_data if test_acestream_link(data[0], data[1], server_ip, timeout, test_delay)]
 
-        generate_m3u8_file(working_acestream_data, output_filename, server_ip)
-        print(f"\nGenerated {output_filename} with {len(working_acestream_data)} entries.\n")
+        generate_m3u8_file(working_acestream_data, playlist, server_ip)
+        print(f"Generated {playlist} with {len(working_acestream_data)} entries.\n")
         
-        generate_index_html(output_filename)
-        print(f"\nGenerated index.html for web player.\n")
+        generate_index_html(playlist)
+        print(f"Generated index.html for web player.\n")
         
         time.sleep(update_interval)
         

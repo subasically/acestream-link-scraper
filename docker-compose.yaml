@@ -14,7 +14,7 @@ services:
       - UPDATE_INTERVAL=360 # Time in minutes between updates (default: 6 hours)
       - SERVER_IP=server:6878 # Default server IP
       - SEARCH_QUERIES=[UK],[US],DAZN # Default search queries
-      - OUTPUT_FILENAME=playlist/output.m3u8 # Default output filename
+      - PLAYLIST_FILENAME=playlist/output.m3u8 # Default output filename
       - TEST_DELAY=5 # Default delay between tests in seconds
       - TIMEOUT=10 # Default timeout for testing links in seconds
       - TZ=America/Chicago # Replace with your desired timezone

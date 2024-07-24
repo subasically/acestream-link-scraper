@@ -20,7 +20,7 @@ AceStream Link Scraper is a Python-based tool that scrapes AceStream links from 
 - `UPDATE_INTERVAL`: Interval (in minutes) between updates (default: 360 minutes / 6 hours).
 - `SERVER_IP`: The server IP for testing AceStream links (default: `10.10.10.5:32768`).
 - `SEARCH_QUERIES`: Comma-separated list of search queries (default: `sport,sky,f1`).
-- `OUTPUT_FILENAME`: The name of the output M3U8 file (default: `playlist/output.m3u8`).
+- `PLAYLIST_FILENAME`: The name of the output M3U8 file (default: `playlist/output.m3u8`).
 - `TEST_DELAY`: Delay (in seconds) between testing each link (default: 5 seconds).
 - `TIMEOUT`: Timeout (in seconds) for testing each link (default: 10 seconds).
 
@@ -58,7 +58,7 @@ services:
       - UPDATE_INTERVAL=360  # Time in minutes between updates (default: 6 hours)
       - SERVER_IP=10.10.10.5:32768  # Default server IP
       - SEARCH_QUERIES=sport,sky,f1  # Default search queries
-      - OUTPUT_FILENAME=playlist/output.m3u8  # Default output filename
+      - PLAYLIST_FILENAME=playlist/output.m3u8  # Default output filename
       - TEST_DELAY=5  # Default delay between tests in seconds
       - TIMEOUT=10  # Default timeout for testing links in seconds
     volumes:
