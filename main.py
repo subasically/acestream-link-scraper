@@ -94,15 +94,6 @@ def main():
     timeout = int(os.getenv('TIMEOUT', 10))
 
     while True:
-        version = check_acestream_version(server_ip)
-        if version:
-            logging.info(f"AceStream is ready! Version: {version} 🚀")
-            break
-        else:
-            logging.warning("AceStream is not ready yet. Retrying in 5 seconds...")
-            time.sleep(5)
-
-    while True:
         all_acestream_data = []
         for query in search_queries:
             acestream_data = collect_acestream_ids(query)
