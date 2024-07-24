@@ -55,6 +55,32 @@ def generate_m3u8_file(acestream_data, filename, server_ip):
                 f.write(f"#EXTINF:-1,{text_content}\n")
                 f.write(f"{base_url}{acestream_id}\n")
 
+# Define the function to generate the index.html file
+def generate_index_html(filename):
+    html_content = f"""<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>HLS Video Player</title>
+                    <link href="https://vjs.zencdn.net/7.14.3/video-js.css" rel="stylesheet">
+                    <script src="https://vjs.zencdn.net/7.14.3/video.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>
+                    </head>
+                    <body>
+                    <video id="hls-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360">
+                        <source src="{filename}" type="application/x-mpegURL">
+                    </video>
+
+                    <script>
+                        var player = videojs('hls-video');
+                    </script>
+                    </body>
+                    </html>
+                    """
+    with open("index.html", "w") as f:
+        f.write(html_content)
+        
 def check_acestream_version(server_ip):
     url = f"http://{server_ip}/webui/api/service?method=get_version"
     try:
