@@ -46,21 +46,40 @@ AceStream Link Scraper is a Python-based tool that scrapes AceStream links from 
 
 ```yaml
 services:
-  http-proxy:
+  server:
     image: ghcr.io/martinbjeldbak/acestream-http-proxy
+    container_name: acestream-http-proxy
     ports:
-      - '6878:80'
-  link-scraper:
+      - "6878:80"
+
+  app:
     depends_on:
-      - http-proxy
+      - server
     image: subasically/acestream-link-scraper
+    container_name: acestream-link-scraper
     environment:
-      - UPDATE_INTERVAL=360  # Time in minutes between updates (default: 6 hours)
-      - SERVER_IP=10.10.10.5:32768  # Default server IP
-      - SEARCH_QUERIES=sport,sky,f1  # Default search queries
-      - PLAYLIST_FILENAME=output.m3u8  # Default output filename
-      - TEST_DELAY=5  # Default delay between tests in seconds
-      - TIMEOUT=10  # Default timeout for testing links in seconds
+      - UPDATE_INTERVAL=360 # Time in minutes between updates (default: 6 hours)
+      - SERVER_IP=server:6878 # Default server IP
+      - SEARCH_QUERIES=[UK],[US],DAZN # Default search queries
+      - PLAYLIST_FILENAME=output.m3u8 # Default output filename
+      - TEST_DELAY=5 # Default delay between tests in seconds
+      - TIMEOUT=10 # Default timeout for testing links in seconds
+      - TZ=America/Chicago # Replace with your desired timezone
+      - MAX_RETRIES=30
+      - RETRY_INTERVAL=5
     volumes:
-      - /home/directory/:/usr/src/app # Change home directory to your local directory
+      - /appdata/acestream-http-proxy/:/usr/src/app # Change home directory to your local directory
+    entrypoint:
+      [
+        "/usr/src/app/wait-for-acestream.sh",
+        "server:80",
+        "python",
+        "main.py"
+      ]
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
 ```

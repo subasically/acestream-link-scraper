@@ -4,7 +4,7 @@ import time
 import os
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 def collect_acestream_ids(search_query):
     logging.info(f"Search for {search_query}")
@@ -106,14 +106,13 @@ def main():
         working_acestream_data = [data for data in all_acestream_data if test_acestream_link(data[0], data[1], server_ip, timeout, test_delay)]
 
         generate_m3u8_file(working_acestream_data, playlist, server_ip)
-        print(f"Generated {playlist} with {len(working_acestream_data)} entries.\n")
+        print(f"\nGenerated {playlist} with {len(working_acestream_data)} entries.")
         
         generate_index_html(playlist)
         print(f"Generated index.html for web player.\n")
         
-        time.sleep(update_interval)
-        
         logging.info("Waiting for next update...")
+        time.sleep(update_interval)
 
 if __name__ == "__main__":
     main()
