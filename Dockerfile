@@ -8,12 +8,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Create a working directory
 WORKDIR /usr/src/app
 
-# Install curl and other dependencies first
-RUN apt-get update && \
-  apt-get install -y curl && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
-
 # Copy only requirements.txt first to leverage Docker caching
 COPY requirements.txt /usr/src/app/
 
