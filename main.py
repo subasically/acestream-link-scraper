@@ -6,6 +6,24 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
+def check_server_version(url):
+    logging.info(f"Checking server version at {url}")
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        # Assume the version is in a key named 'version'
+        version = data.get('version')
+        if version:
+            logging.info(f"acestream-http-proxy version is {version}")
+            return True
+        else:
+            logging.error("Version number not found in response")
+            return False
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error checking server version: {e}")
+        return False
+
 def collect_acestream_ids(search_query):
     logging.info(f"Search for {search_query}")
     url = f"https://acestreamsearch.net/en/?q={search_query}"
@@ -22,9 +40,7 @@ def collect_acestream_ids(search_query):
     return acestream_links
 
 def test_acestream_link(acestream_id, acestream_title, server_ip, timeout, delay):
-    # logging.info(f"Testing {acestream_title}")
     test_url = f"http://{server_ip}/ace/manifest.m3u8?id={acestream_id}"
-    # logging.info(f"URL: {test_url}")
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
@@ -41,7 +57,6 @@ def test_acestream_link(acestream_id, acestream_title, server_ip, timeout, delay
 
 def generate_m3u8_file(acestream_data, filename, server_ip):
     base_url = f"http://{server_ip}/ace/getstream?id="
-    # create empty file
     with open(filename, 'w') as f:
         pass
     existing_ids = set()
@@ -86,6 +101,12 @@ def main():
     logging.info("Starting AceStream playlist generator...")
     logging.info("*" * 50 + "\n")
     
+    # Check server version
+    version_check_url = f"http://{os.getenv('SERVER_IP', '10.10.10.5:6878')}/webui/api/service?method=get_version"
+    if not check_server_version(version_check_url):
+        logging.error("Server version check failed. Exiting...")
+        return
+    
     search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK],DAZN,Eleven').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 360)) * 60
     server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')
@@ -111,7 +132,7 @@ def main():
         generate_index_html(playlist)
         logging.info(f"Generated index.html for web player.\n")
         
-        logging.info(f"Waiting for {update_interval /3600} hourse before next update...\n")
+        logging.info(f"Waiting for {update_interval / 3600} hours before next update...\n")
         time.sleep(update_interval)
 
 if __name__ == "__main__":

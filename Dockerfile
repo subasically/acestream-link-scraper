@@ -24,8 +24,5 @@ RUN pip install --upgrade pip && \
 # Copy the rest of the application
 COPY . /usr/src/app/
 
-# Make wait-for-it.sh executable
-RUN chmod +x /usr/src/app/wait-for-it.sh
-
 # Run the application
-CMD ["/usr/src/app/wait-for-it.sh", "server:80", "python", "main.py"]
+CMD ["python", "main.py"]

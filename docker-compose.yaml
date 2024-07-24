@@ -1,12 +1,4 @@
 services:
-  server:
-    image: ghcr.io/martinbjeldbak/acestream-http-proxy
-    container_name: acestream-http-proxy
-    ports:
-      - "6878:80"
-    networks:
-      - acestream-network
-
   app:
     image: ghcr.io/subasically/acestream-link-scraper
     container_name: acestream-link-scraper
@@ -22,18 +14,3 @@ services:
       - RETRY_INTERVAL=5
     volumes:
       - /appdata/acestream-http-proxy:/usr/src/app
-    entrypoint:
-      [
-        "/usr/src/app/wait-for-it.sh",
-        "server:80",
-        "python",
-        "main.py"
-      ]
-    depends_on:
-      - server
-    networks:
-      - acestream-network
-
-networks:
-  acestream-network:
-    driver: bridge
