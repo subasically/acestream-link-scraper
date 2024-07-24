@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# wait-for-acestream.sh
+# wait-for-it.sh
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Waiting for AceStream to start..."
 sleep 5
 

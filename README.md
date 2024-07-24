@@ -71,7 +71,7 @@ services:
       - /appdata/acestream-http-proxy/:/usr/src/app # Change home directory to your local directory
     entrypoint:
       [
-        "/usr/src/app/wait-for-acestream.sh",
+        "/usr/src/app/wait-for-it.sh",
         "server:80",
         "python",
         "main.py"
