@@ -1,4 +1,12 @@
 services:
+  server:
+    image: ghcr.io/martinbjeldbak/acestream-http-proxy
+    container_name: acestream-http-proxy
+    ports:
+      - "6878:80"
+    networks:
+      - acestream-network
+
   app:
     image: ghcr.io/subasically/acestream-link-scraper
     container_name: acestream-link-scraper
@@ -14,3 +22,11 @@ services:
       - RETRY_INTERVAL=5
     volumes:
       - /home/subasically/appdata/acestream-link-scraper:/usr/src/app
+    depends_on:
+      - server
+    networks:
+      - acestream-network
+
+networks:
+  acestream-network:
+    driver: bridge
