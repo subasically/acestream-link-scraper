@@ -33,9 +33,9 @@ def test_acestream_link(acestream_id, acestream_title, server_ip, timeout, delay
                 logging.info(f"✅ {acestream_title} is working!")
                 return True
             else:
-                logging.warning(f"❌ ConnectionError: {acestream_title}")
+                logging.warning(f"❌ ConnectionError: {acestream_title} - {test_url}")
         except requests.RequestException as e:
-            logging.error(f"❌ Exception: {acestream_title}")
+            logging.error(f"❌ Exception: {acestream_title} - {test_url}")
         time.sleep(delay)
     return False
 
