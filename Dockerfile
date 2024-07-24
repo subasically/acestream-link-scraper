@@ -19,4 +19,4 @@ RUN pip install --upgrade pip && \
 COPY . /usr/src/app/
 
 # Run the application
-CMD ["python", "main.py"]
+CMD ["python", "./main.py"]
