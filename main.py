@@ -129,8 +129,10 @@ def main():
         working_acestream_data = [data for data in all_acestream_data if test_acestream_link(data[0], data[1], server_ip, timeout, test_delay)]
 
         generate_m3u8_file(working_acestream_data, output_filename, server_ip)
-
-        logging.info(f"Generated {output_filename} with {len(working_acestream_data)} entries.")
+        print(f"\nGenerated {output_filename} with {len(working_acestream_data)} entries.\n")
+        
+        generate_index_html(output_filename)
+        print(f"\nGenerated index.html for web player.\n")
         
         time.sleep(update_interval)
         
