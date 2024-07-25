@@ -7,17 +7,6 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 def check_server_version(server_ip, max_retries=30, timeout=5):
-    """
-    Check if the server version can be retrieved.
-
-    Args:
-        server_ip (str): The IP address of the server.
-        max_retries (int): The maximum number of retry attempts.
-        timeout (int): The timeout for each request in seconds.
-
-    Returns:
-        str: The server version if successful, None otherwise.
-    """
     logging.info("Checking server version...")
     for attempt in range(max_retries):
         try:
@@ -25,24 +14,20 @@ def check_server_version(server_ip, max_retries=30, timeout=5):
             response = requests.get(version_check_url, timeout=timeout)
             response.raise_for_status()  # Raise an exception for HTTP errors
 
-            # Assuming the server responds with JSON containing the version
             version_data = response.json()
             if 'result' in version_data and 'version' in version_data['result']:
                 version = version_data['result']['version']
-                logging.info(f"✅ Server is up and running on version: {version}")
+                logging.info(f"Server is up and running on version: {version}")
                 return version
             else:
-                logging.warning(f"❌ Version key not found in the 'result' key of the response: {version_data}")
+                logging.warning(f"Version key not found in the response. {version_data}")
         except requests.RequestException as e:
-            logging.error(f"❌ Attempt {attempt + 1} of {max_retries}: Error fetching version")
+            logging.error(f"Attempt {attempt + 1} of {max_retries}: Error fetching version - {e}")
 
-        # Wait before retrying
         time.sleep(timeout)
 
     logging.error("Failed to retrieve server version after maximum retries.")
     return None
-
-
 
 def collect_acestream_ids(search_query):
     logging.info(f"Search for {search_query}")
@@ -91,7 +76,7 @@ def generate_m3u8_file(acestream_data, filename, server_ip):
                 f.write(f"#EXTINF:-1,{text_content}\n")
                 f.write(f"{base_url}{acestream_id}\n")
 
-def generate_index_html(filename):
+def generate_index_html(channels):
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,12 +88,24 @@ def generate_index_html(filename):
 <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>
 </head>
 <body>
+<select id="channel-select">
+    {"".join([f'<option value="{channel}">{channel}</option>' for channel in channels])}
+</select>
+
 <video id="hls-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360">
-    <source src="{filename}" type="application/x-mpegURL">
+    <source id="video-source" src="{channels[0]}.m3u8" type="application/x-mpegURL">
 </video>
 
 <script>
     var player = videojs('hls-video');
+    var select = document.getElementById('channel-select');
+    var source = document.getElementById('video-source');
+
+    select.addEventListener('change', function() {
+        var selectedChannel = select.value;
+        source.src = selectedChannel + ".m3u8";
+        player.load();
+    });
 </script>
 </body>
 </html>
@@ -117,41 +114,32 @@ def generate_index_html(filename):
         f.write(html_content)
     
 def main():
-    time.sleep(10)  # Wait for the AceStream server to start
-    
-    logging.info("*" * 50)
+    logging.info("\n" + "*" * 50)
     logging.info("Starting AceStream playlist generator...")
     logging.info("*" * 50 + "\n")
     
     search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK],DAZN,Eleven').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 360)) * 60
     server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')
-    playlist = os.getenv('PLAYLIST_FILENAME', 'output.m3u8')
     test_delay = int(os.getenv('TEST_DELAY', 5))
     timeout = int(os.getenv('TIMEOUT', 10))
 
-    # Check server version
     if not check_server_version(server_ip):
         logging.error("Server version check failed. Exiting...")
         return
     
+    channels = []
     while True:
-        all_acestream_data = []
         for query in search_queries:
             acestream_data = collect_acestream_ids(query)
-            all_acestream_data.extend(acestream_data)
-
-        all_acestream_data.sort(key=lambda x: x[1])
-
-        logging.info(f"Found {len(all_acestream_data)} links. Estimated time to test: {len(all_acestream_data) * test_delay} seconds.\n")
-
-        working_acestream_data = [data for data in all_acestream_data if test_acestream_link(data[0], data[1], server_ip, timeout, test_delay)]
-
-        generate_m3u8_file(working_acestream_data, playlist, server_ip)
-        logging.info(f"\nGenerated {playlist} with {len(working_acestream_data)} entries.")
+            if acestream_data:
+                playlist_filename = f"{query.strip('[]')}.m3u8"
+                generate_m3u8_file(acestream_data, playlist_filename, server_ip)
+                channels.append(query.strip('[]'))
+                logging.info(f"\nGenerated {playlist_filename} with {len(acestream_data)} entries.")
         
-        generate_index_html(playlist)
-        logging.info(f"Generated index.html for web player.\n")
+        generate_index_html(channels)
+        logging.info("Generated index.html for web player.\n")
         
         logging.info(f"Waiting for {update_interval / 3600} hours before next update...\n")
         time.sleep(update_interval)

@@ -64,7 +64,7 @@ services:
       - TIMEOUT=10
       - TZ=America/Chicago
       - MAX_RETRIES=30
-      - RETRY_INTERVAL=5
+      - RETRY_DELAY=5
     volumes:
       - /home/subasically/appdata/acestream-link-scraper:/usr/src/app
 ```

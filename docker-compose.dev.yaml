@@ -10,7 +10,9 @@ services:
       - acestream-network
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: acestream-link-scraper
     env_file:
       - .env
