@@ -58,43 +58,45 @@
   </select>
 
   <div class="video-container">
-    <video id="video" class="video-js vjs-default-skin" controls autoplay playsinline></video>
+    <video id="video" class="video-js vjs-default-skin" controls autoplay playsinline style="min-height:360px;"></video>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/video.js@8.10.0/dist/video.min.js"></script>
   <script>
-    const player = videojs('video');
-    const select = document.getElementById('channel-select');
+    document.addEventListener('DOMContentLoaded', function() {
+      const player = videojs('video');
+      const select = document.getElementById('channel-select');
 
-    // Fetch channels from channels.json and populate select
-    fetch('channels.json')
-      .then(res => res.json())
-      .then(channels => {
-        channels.forEach(channel => {
-          const opt = document.createElement('option');
-          opt.value = channel.id;
-          opt.textContent = channel.title || channel.id;
-          select.appendChild(opt);
+      // Fetch channels from channels.json and populate select
+      fetch('channels.json')
+        .then(res => res.json())
+        .then(channels => {
+          channels.forEach(channel => {
+            const opt = document.createElement('option');
+            opt.value = channel.id;
+            opt.textContent = channel.title || channel.id;
+            select.appendChild(opt);
+          });
+          // If URL param exists, select it
+          const params = new URLSearchParams(window.location.search);
+          if (params.has('channel')) {
+            select.value = params.get('channel');
+            playChannel(params.get('channel'));
+          }
         });
-        // If URL param exists, select it
-        const params = new URLSearchParams(window.location.search);
-        if (params.has('channel')) {
-          select.value = params.get('channel');
-          playChannel(params.get('channel'));
-        }
+
+      const playChannel = (id) => {
+        if (!id) return;
+        // Use nginx as a proxy for CORS
+        const url = `/ace/manifest.m3u8?id=${id}`;
+        player.src({ src: url, type: 'application/x-mpegURL' });
+        player.play();
+        history.replaceState({}, '', `?channel=${id}`);
+      };
+
+      select.addEventListener('change', () => {
+        playChannel(select.value);
       });
-
-    const playChannel = (id) => {
-      if (!id) return;
-      // Use nginx as a proxy for CORS
-      const url = `/ace/manifest.m3u8?id=${id}`;
-      player.src({ src: url, type: 'application/x-mpegURL' });
-      player.play();
-      history.replaceState({}, '', `?channel=${id}`);
-    };
-
-    select.addEventListener('change', () => {
-      playChannel(select.value);
     });
   </script>
 </body>
