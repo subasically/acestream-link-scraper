@@ -13,7 +13,7 @@ services:
     environment:
       - TZ=America/Chicago
       - UPDATE_INTERVAL=60
-      - SERVER_IP=server:6878
+      - SERVER_IP=10.10.10.5:6878
       - SEARCH_QUERIES=[UK],[US],DAZN,Eleven
     volumes:
       - acestream-data:/usr/src/app
@@ -27,6 +27,7 @@ services:
     container_name: acestream-static
     volumes:
       - acestream-data:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "8500:80"
     networks:
