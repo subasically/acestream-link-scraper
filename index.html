@@ -86,7 +86,7 @@
 
     const playChannel = (id) => {
       if (!id) return;
-      const url = `http://localhost/ace/manifest.m3u8?id=${id}`;
+      const url = `http://localhost:6878/ace/manifest.m3u8?id=${id}`;
       player.src({ src: url, type: 'application/x-mpegURL' });
       player.play();
       history.replaceState({}, '', `?channel=${id}`);
