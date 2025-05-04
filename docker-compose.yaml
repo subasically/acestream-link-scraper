@@ -1,15 +1,21 @@
 services:
-  app:
+  acestream-proxy:
+    image: ghcr.io/martinbjeldbak/acestream-http-proxy
+    container_name: acestream-http-proxy
+    ports:
+      - "6878:6878"
+
+  scraper-web:
     build: .
-    container_name: acestream-all-in-one
+    container_name: scraper-web
     environment:
-      - TZ=America/Chicago
       - UPDATE_INTERVAL=60
-      - SERVER_IP=10.10.10.5:6878
+      - SERVER_IP=acestream-proxy:6878
       - SEARCH_QUERIES=[UK],[US],DAZN,Eleven
     ports:
       - "8500:80"
-    restart: unless-stopped
+    depends_on:
+      - acestream-proxy
 
 networks:
   default:

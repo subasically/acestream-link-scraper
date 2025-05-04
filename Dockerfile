@@ -9,7 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 # Create a working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt ./
