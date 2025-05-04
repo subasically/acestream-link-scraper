@@ -6,7 +6,7 @@ services:
       - "6878:6878"
 
   scraper-web:
-    build: .
+    image: ghcr.io/yourusername/acestream-link-scraper:latest
     container_name: scraper-web
     environment:
       - UPDATE_INTERVAL=60
