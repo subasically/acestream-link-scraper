@@ -20,6 +20,8 @@ services:
       - TZ=America/Chicago
       - MAX_RETRIES=30
       - RETRY_DELAY=5
+    volumes:
+      - acestream-data:/usr/src/app
     depends_on:
       - server
     networks:
@@ -29,7 +31,7 @@ services:
     image: nginx:alpine
     container_name: acestream-static
     volumes:
-      - /home/youruser/acestream-link-scraper:/usr/share/nginx/html:ro
+      - acestream-data:/usr/share/nginx/html:ro
     ports:
       - "8080:80"
     networks:
@@ -38,3 +40,6 @@ services:
 networks:
   acestream-network:
     driver: bridge
+
+volumes:
+  acestream-data:
