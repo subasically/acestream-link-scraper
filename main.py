@@ -61,6 +61,18 @@ def generate_playlist_and_json(acestream_data, playlist_filename, json_filename,
     with open(json_filename, 'w') as f:
         json.dump(channels_json, f, indent=2)
 
+def update_index_html(server_ip, html_path="index.html"):
+    # Replace the __SERVER_IP__ placeholder in index.html with the actual server_ip
+    try:
+        with open(html_path, "r") as f:
+            html = f.read()
+        html = html.replace("__SERVER_IP__", server_ip.split(":")[0])
+        with open(html_path, "w") as f:
+            f.write(html)
+        logging.info(f"Updated {html_path} with server IP: {server_ip}")
+    except Exception as e:
+        logging.error(f"Failed to update {html_path}: {e}")
+
 def background_scraper():
     logging.info("\n" + "*" * 50)
     logging.info("Starting AceStream Link Scraper...")
@@ -85,7 +97,8 @@ def background_scraper():
                 "channels.json",
                 server_ip
             )
-            logging.info(f"\nGenerated playlist.m3u8 and channels.json with {len(all_channels)} entries.")
+            update_index_html(server_ip)
+            logging.info(f"\nGenerated playlist.m3u8, channels.json, and updated index.html with {len(all_channels)} entries.")
         else:
             logging.info("No channels found for any query.")
         logging.info(f"Waiting for {update_interval / 3600} hours before next update...\n")
