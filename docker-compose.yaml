@@ -21,7 +21,7 @@ services:
       - MAX_RETRIES=30
       - RETRY_DELAY=5
     volumes:
-      - /home/subasically/appdata/acestream-link-scraper:/usr/src/app
+      - <LOCAL-DIR>:/usr/src/app
     depends_on:
       - server
     networks:
