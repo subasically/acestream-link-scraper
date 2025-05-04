@@ -69,7 +69,7 @@ def background_scraper():
     
     search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK],DAZN,Eleven,ESPN').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 360)) * 60
-    server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')
+    server_ip = os.getenv('SERVER_IP', 'localhost:6878')
 
     while True:
         all_channels = []
@@ -93,7 +93,7 @@ def background_scraper():
         time.sleep(update_interval)
 
 def main():
-    server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')
+    server_ip = os.getenv('SERVER_IP', 'localhost:6878')
     if not check_server_version(server_ip):
         logging.error("Server version check failed. Exiting...")
         send_ntfy_notification("AceStream Playlist Generator", "Server version check failed. Exiting...")
