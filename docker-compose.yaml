@@ -20,8 +20,6 @@ services:
       - TZ=America/Chicago
       - MAX_RETRIES=30
       - RETRY_DELAY=5
-    volumes:
-      - <LOCAL-DIR>:/usr/src/app
     depends_on:
       - server
     networks:
@@ -31,7 +29,7 @@ services:
     image: nginx:alpine
     container_name: acestream-static
     volumes:
-      - <LOCAL-DIR>:/usr/share/nginx/html:ro
+      - /home/youruser/acestream-link-scraper:/usr/share/nginx/html:ro
     ports:
       - "8080:80"
     networks:
