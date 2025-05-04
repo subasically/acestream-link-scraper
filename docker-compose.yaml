@@ -1,43 +1,16 @@
 services:
-  server:
-    image: ghcr.io/martinbjeldbak/acestream-http-proxy
-    container_name: acestream-http-proxy
-    ports:
-      - "6878:6878"
-    networks:
-      - acestream-network
-
   app:
-    image: ghcr.io/subasically/acestream-link-scraper
-    container_name: acestream-link-scraper
+    build: .
+    container_name: acestream-all-in-one
     environment:
       - TZ=America/Chicago
       - UPDATE_INTERVAL=60
       - SERVER_IP=10.10.10.5:6878
       - SEARCH_QUERIES=[UK],[US],DAZN,Eleven
-    volumes:
-      - acestream-data:/usr/src/app
-    depends_on:
-      - server
-    networks:
-      - acestream-network
-
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx
-    image: acestream-static-custom
-    container_name: acestream-static
-    volumes:
-      - acestream-data:/usr/share/nginx/html:ro
     ports:
       - "8500:80"
-    networks:
-      - acestream-network
+    restart: unless-stopped
 
 networks:
-  acestream-network:
+  default:
     driver: bridge
-
-volumes:
-  acestream-data:
