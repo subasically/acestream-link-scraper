@@ -86,8 +86,8 @@
 
     const playChannel = (id) => {
       if (!id) return;
-      // __SERVER_IP__ will be replaced by main.py
-      const url = `http://__SERVER_IP__:6878/ace/manifest.m3u8?id=${id}`;
+      // Use nginx as a proxy for CORS
+      const url = `/ace/manifest.m3u8?id=${id}`;
       player.src({ src: url, type: 'application/x-mpegURL' });
       player.play();
       history.replaceState({}, '', `?channel=${id}`);
