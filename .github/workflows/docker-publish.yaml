@@ -57,3 +57,17 @@ jobs:
         if: failure()
         run: |
           echo "Build failed. Check the logs."
+
+      - name: Trigger Portainer Update Webhook
+        if: success()
+        uses: newarifrh/portainer-service-webhook@v1
+        with:
+          webhook_url: ${{ secrets.PORTAINER_WEBHOOK_URL }}
+
+      - name: Trigger NTFY Update Message
+        if: success()
+        uses: subasically/github-actions-ntfy-template/.github/actions/ntfy-notify@v1
+        with:
+          ntfy_url: ${{ secrets.NTFY_URL }}
+          ntfy_topic: ${{ secrets.NTFY_TOPIC }}
+          github_repo: ${{ github.repository }}
