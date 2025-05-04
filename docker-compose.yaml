@@ -11,15 +11,10 @@ services:
     image: ghcr.io/subasically/acestream-link-scraper
     container_name: acestream-link-scraper
     environment:
+      - TZ=America/Chicago
       - UPDATE_INTERVAL=60
       - SERVER_IP=server:6878
       - SEARCH_QUERIES=[UK],[US],DAZN,Eleven
-      - PLAYLIST_FILENAME=output.m3u8
-      - TEST_DELAY=1
-      - TIMEOUT=10
-      - TZ=America/Chicago
-      - MAX_RETRIES=30
-      - RETRY_DELAY=5
     volumes:
       - acestream-data:/usr/src/app
     depends_on:
