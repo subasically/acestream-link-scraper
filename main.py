@@ -48,15 +48,22 @@ def collect_acestream_ids(search_query):
 
 def generate_playlist_and_json(acestream_data, playlist_filename, json_filename, server_ip):
     base_url = f"http://{server_ip}/ace/getstream?id="
+    # Deduplicate by AceStream ID, keep first occurrence
+    seen = set()
+    deduped = []
+    for acestream_id, text_content in acestream_data:
+        if acestream_id not in seen:
+            deduped.append((acestream_id, text_content))
+            seen.add(acestream_id)
     # Write .m3u8 playlist
     with open(playlist_filename, 'w') as f:
-        for acestream_id, text_content in acestream_data:
+        for acestream_id, text_content in deduped:
             f.write(f"#EXTINF:-1,{text_content}\n")
             f.write(f"{base_url}{acestream_id}\n")
     # Write .json file
     channels_json = [
         {"id": acestream_id, "title": text_content}
-        for acestream_id, text_content in acestream_data
+        for acestream_id, text_content in deduped
     ]
     with open(json_filename, 'w') as f:
         json.dump(channels_json, f, indent=2)
