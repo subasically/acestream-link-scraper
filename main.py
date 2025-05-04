@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import time
 import os
 import logging
+import json
 from ntfy import send_ntfy_notification
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
@@ -45,39 +46,22 @@ def collect_acestream_ids(search_query):
                        for link in soup.find_all('a', href=True) if link['href'].startswith('acestream://')]
     return acestream_links
 
-def test_acestream_link(acestream_id, acestream_title, server_ip, timeout, delay):
-    test_url = f"http://{server_ip}/ace/manifest.m3u8?id={acestream_id}"
-    start_time = time.time()
-    while time.time() - start_time < timeout:
-        try:
-            response = requests.get(test_url, timeout=timeout)
-            if response.status_code == 200:
-                logging.info(f"✅ {acestream_title} is working!")
-                return True
-            else:
-                logging.warning(f"❌ ConnectionError: {acestream_title} - {test_url}")
-        except requests.RequestException as e:
-            logging.error(f"❌ Exception: {acestream_title} - {test_url}")
-        time.sleep(delay)
-    return False
-
-def generate_m3u8_file(acestream_data, filename, server_ip):
+def generate_playlist_and_json(acestream_data, playlist_filename, json_filename, server_ip):
     base_url = f"http://{server_ip}/ace/getstream?id="
-    with open(filename, 'w') as f:
-        pass
-    existing_ids = set()
-    with open(filename, 'r') as f:
-        for line in f:
-            if line.startswith(base_url):
-                existing_ids.add(line.strip().replace(base_url, ''))
-    
-    with open(filename, 'a') as f:
+    # Write .m3u8 playlist
+    with open(playlist_filename, 'w') as f:
         for acestream_id, text_content in acestream_data:
-            if acestream_id not in existing_ids:
-                f.write(f"#EXTINF:-1,{text_content}\n")
-                f.write(f"{base_url}{acestream_id}\n")
-    
-def main():
+            f.write(f"#EXTINF:-1,{text_content}\n")
+            f.write(f"{base_url}{acestream_id}\n")
+    # Write .json file
+    channels_json = [
+        {"id": acestream_id, "title": text_content}
+        for acestream_id, text_content in acestream_data
+    ]
+    with open(json_filename, 'w') as f:
+        json.dump(channels_json, f, indent=2)
+
+def background_scraper():
     logging.info("\n" + "*" * 50)
     logging.info("Starting AceStream playlist generator...")
     send_ntfy_notification("AceStream Playlist Generator", "Starting AceStream playlist generator...")
@@ -86,26 +70,37 @@ def main():
     search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK],DAZN,Eleven,ESPN').split(',')
     update_interval = int(os.getenv('UPDATE_INTERVAL', 360)) * 60
     server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')
-    test_delay = int(os.getenv('TEST_DELAY', 5))
-    timeout = int(os.getenv('TIMEOUT', 10))
 
+    while True:
+        all_channels = []
+        for query in search_queries:
+            acestream_data = collect_acestream_ids(query)
+            if acestream_data:
+                logging.info(f"Found {len(acestream_data)} entries for query '{query.strip('[]')}'")
+                all_channels.extend(acestream_data)
+        if all_channels:
+            generate_playlist_and_json(
+                all_channels,
+                "playlist.m3u8",
+                "channels.json",
+                server_ip
+            )
+            logging.info(f"\nGenerated playlist.m3u8 and channels.json with {len(all_channels)} entries.")
+        else:
+            logging.info("No channels found for any query.")
+        logging.info(f"Waiting for {update_interval / 3600} hours before next update...\n")
+        send_ntfy_notification("AceStream Playlist Generator", f"Updated playlist with {len(all_channels)} channels.")
+        time.sleep(update_interval)
+
+def main():
+    server_ip = os.getenv('SERVER_IP', '10.10.10.5:6878')
     if not check_server_version(server_ip):
         logging.error("Server version check failed. Exiting...")
         send_ntfy_notification("AceStream Playlist Generator", "Server version check failed. Exiting...")
         return
-    
-    channels = []
-    while True:
-        for query in search_queries:
-            acestream_data = collect_acestream_ids(query)
-            if acestream_data:
-                playlist_filename = f"{query.strip('[]')}.m3u8"
-                generate_m3u8_file(acestream_data, playlist_filename, server_ip)
-                channels.append(query.strip('[]'))
-                logging.info(f"\nGenerated {playlist_filename} with {len(acestream_data)} entries.")
-        
-        logging.info(f"Waiting for {update_interval / 3600} hours before next update...\n")
-        time.sleep(update_interval)
+
+    # Run the scraper in the main thread
+    background_scraper()
 
 if __name__ == "__main__":
     main()
