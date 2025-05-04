@@ -27,6 +27,16 @@ services:
     networks:
       - acestream-network
 
+  web:
+    image: nginx:alpine
+    container_name: acestream-static
+    volumes:
+      - <LOCAL-DIR>:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    networks:
+      - acestream-network
+
 networks:
   acestream-network:
     driver: bridge
