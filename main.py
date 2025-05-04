@@ -63,8 +63,8 @@ def generate_playlist_and_json(acestream_data, playlist_filename, json_filename,
 
 def background_scraper():
     logging.info("\n" + "*" * 50)
-    logging.info("Starting AceStream playlist generator...")
-    send_ntfy_notification("AceStream Playlist Generator", "Starting AceStream playlist generator...")
+    logging.info("Starting AceStream Link Scraper...")
+    send_ntfy_notification("AceStream Link Scraper", "Starting AceStream Link Scraper...")
     logging.info("*" * 50 + "\n")
     
     search_queries = os.getenv('SEARCH_QUERIES', '[US],[UK],DAZN,Eleven,ESPN').split(',')
@@ -89,14 +89,14 @@ def background_scraper():
         else:
             logging.info("No channels found for any query.")
         logging.info(f"Waiting for {update_interval / 3600} hours before next update...\n")
-        send_ntfy_notification("AceStream Playlist Generator", f"Updated playlist with {len(all_channels)} channels.")
+        send_ntfy_notification("AceStream Link Scraper", f"Updated playlist with {len(all_channels)} channels.")
         time.sleep(update_interval)
 
 def main():
     server_ip = os.getenv('SERVER_IP', 'localhost:6878')
     if not check_server_version(server_ip):
         logging.error("Server version check failed. Exiting...")
-        send_ntfy_notification("AceStream Playlist Generator", "Server version check failed. Exiting...")
+        send_ntfy_notification("AceStream Link Scraper", "Server version check failed. Exiting...")
         return
 
     # Run the scraper in the main thread
