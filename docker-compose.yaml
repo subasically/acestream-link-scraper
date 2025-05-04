@@ -3,7 +3,7 @@ services:
     image: ghcr.io/martinbjeldbak/acestream-http-proxy
     container_name: acestream-http-proxy
     ports:
-      - "6878:80"
+      - "6878:6878"
     networks:
       - acestream-network
 

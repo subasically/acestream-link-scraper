@@ -3,9 +3,7 @@ services:
     image: ghcr.io/martinbjeldbak/acestream-http-proxy
     container_name: acestream-http-proxy
     ports:
-      - '6878:80'
-    env_file:
-      - .env
+      - '6878:6878'
     networks:
       - acestream-network
 
@@ -14,8 +12,10 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: acestream-link-scraper
-    env_file:
-      - .env
+    environment:
+      - SEARCH_QUERIES=
+      - UPDATE_INTERVAL=3600
+      - SERVER_IP=
     volumes:
       - ./:/usr/src/app
     depends_on:
