@@ -12,6 +12,7 @@ services:
       - UPDATE_INTERVAL=60
       - SERVER_IP=acestream-proxy:6878
       - SEARCH_QUERIES=[UK],[US],DAZN,Eleven
+      - TVMAZEAPIKEY=your_tvmaze_api_key # Optional
     ports:
       - "8500:80"
     depends_on:
