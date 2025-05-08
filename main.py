@@ -67,12 +67,22 @@ def fetch_tvmaze_info(channels_json, output_json="tvmaze.json"):
     tvmaze_data = {}
     api_key = os.getenv("TVMAZE_API_KEY")
     headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
+
+    # Load mapping file if it exists
+    mapping_path = "tvmaze_channel_map.json"
+    channel_map = {}
+    if os.path.exists(mapping_path):
+        with open(mapping_path, "r") as f:
+            channel_map = json.load(f)
+
     for ch in channels_json:
-        name = ch["title"].split("[")[0].strip()  # crude channel name extraction
+        # Use mapped name if available, else fallback to original
+        orig_name = ch["title"].split("[")[0].strip()
+        search_name = channel_map.get(ch["title"], orig_name)
         try:
             resp = requests.get(
                 "https://api.tvmaze.com/search/shows",
-                params={"q": name},
+                params={"q": search_name},
                 headers=headers,
                 timeout=10,
             )
@@ -80,7 +90,7 @@ def fetch_tvmaze_info(channels_json, output_json="tvmaze.json"):
             results = resp.json()
             if results:
                 show = results[0]["show"]
-                tvmaze_data[name] = {
+                tvmaze_data[orig_name] = {
                     "name": show.get("name"),
                     "genres": show.get("genres"),
                     "summary": show.get("summary"),
@@ -89,7 +99,7 @@ def fetch_tvmaze_info(channels_json, output_json="tvmaze.json"):
                     "tvmaze_url": show.get("url"),
                 }
         except Exception as e:
-            logging.warning(f"TVmaze lookup failed for {name}: {e}")
+            logging.warning(f"TVmaze lookup failed for {search_name}: {e}")
     with open(output_json, "w") as f:
         json.dump(tvmaze_data, f, indent=2)
     logging.info(f"TVmaze info saved to {output_json}")
