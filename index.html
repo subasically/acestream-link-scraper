@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
   <title>BASIC SPORTS!</title>
-  <link href="https://cdn.jsdelivr.net/npm/video.js@8.10.0/dist/video-js.min.css" rel="stylesheet" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/video.js@8.10.0/dist/video-js.min.css"
+    rel="stylesheet"
+  />
   <style>
     body {
       margin: 0;
@@ -59,6 +66,7 @@
         max-width: 100vw;
         aspect-ratio: 16/9;
       }
+
       .video-js {
         font-size: 1.5rem;
         --vjs-control-bar-height: 3.5em;
@@ -67,30 +75,54 @@
     }
   </style>
 </head>
+
 <body>
   <h1>BASIC SPORTS!</h1>
   <p>Welcome to BASIC SPORTS! Select a channel to start watching.</p>
-  <h2>Select a Channel</h2>
+  <h2 id="channel-count-heading">Select a Channel ()</h2>
   <select id="channel-select">
     <option value="">-- Choose a channel --</option>
     <!-- Options will be populated dynamically -->
   </select>
 
   <p>
-    <a href="playlist.m3u8" download style="font-size:1.1rem;display:inline-block;margin:1rem 0;">
+    <a
+      href="playlist.m3u8"
+      download
+      style="font-size:1.1rem;display:inline-block;margin:1rem 0;"
+    >
       ⬇️ Download playlist.m3u8
     </a>
   </p>
 
   <div class="video-container">
-    <video id="video" class="video-js vjs-default-skin" controls autoplay playsinline style="min-height:360px;"></video>
+    <video
+      id="video"
+      class="video-js vjs-default-skin"
+      controls
+      autoplay
+      playsinline
+      style="min-height:360px;"
+    ></video>
   </div>
+
+  <p>
+    <a
+      href="epg.xml"
+      download
+      style="font-size:1.1rem;display:inline-block;margin:1rem 0;"
+    >
+      📅 Download EPG
+    </a>
+  </p>
+
 
   <script src="https://cdn.jsdelivr.net/npm/video.js@8.10.0/dist/video.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const player = videojs('video');
       const select = document.getElementById('channel-select');
+      const heading = document.getElementById('channel-count-heading');
 
       // Fetch channels from channels.json and populate select
       fetch('channels.json')
@@ -102,6 +134,8 @@
             opt.textContent = channel.title || channel.id;
             select.appendChild(opt);
           });
+          // Update channel count in heading
+          heading.textContent = `Select a Channel (${channels.length})`;
           // If URL param exists, select it
           const params = new URLSearchParams(window.location.search);
           if (params.has('channel')) {
@@ -125,4 +159,5 @@
     });
   </script>
 </body>
+
 </html>
