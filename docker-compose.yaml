@@ -8,7 +8,7 @@ services:
   manifest-proxy:
     build:
       context: .
-      dockerfile: Dockerfile.manifest # we'll create this below
+      dockerfile: Dockerfile.manifest
     container_name: manifest-proxy
     ports:
       - "8888:8080"
@@ -16,14 +16,14 @@ services:
       - acestream-proxy
 
   scraper-web:
-    image: ghcr.io/yourusername/acestream-link-scraper:latest
+    image: ghcr.io/subasically/acestream-link-scraper:latest
     container_name: scraper-web
     environment:
-      - UPDATE_INTERVAL=60
-      - SERVER_IP=my.domain.com/ace
+      - UPDATE_INTERVAL=4320
+      - SERVER_IP=channels.subasically.me/ace
       - API_SERVER_IP=acestream-proxy:6878
-      - SEARCH_QUERIES=[UK],[US],DAZN,Eleven
-      - TVMAZEAPIKEY=your_tvmaze_api_key # Optional
+      - SEARCH_QUERIES=[UK],[US],DAZN,Eleven,ESPN,Bein,Arena Sport,EuroSport,Nova Sport,polsat sport
+      - TVMAZE_API_KEY=1OWvzHAsenxHdrOOV-kFNzf27Hy06ISe
     ports:
       - "8500:80"
     depends_on:
