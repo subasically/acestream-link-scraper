@@ -1,10 +1,4 @@
 services:
-  acestream-proxy:
-    image: ghcr.io/martinbjeldbak/acestream-http-proxy
-    container_name: acestream-http-proxy
-    ports:
-      - "6878:6878"
-
   manifest-proxy:
     build:
       context: .
