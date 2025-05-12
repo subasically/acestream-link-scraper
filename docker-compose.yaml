@@ -10,7 +10,8 @@ services:
     container_name: scraper-web
     environment:
       - UPDATE_INTERVAL=60
-      - SERVER_IP=acestream-proxy:6878
+      - SERVER_IP=my.domain.com/ace
+      - API_SERVER_IP=acestream-proxy:6878
       - SEARCH_QUERIES=[UK],[US],DAZN,Eleven
       - TVMAZEAPIKEY=your_tvmaze_api_key # Optional
     ports:

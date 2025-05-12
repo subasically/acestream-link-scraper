@@ -193,7 +193,9 @@ def background_scraper():
 
 def main():
     server_ip = os.getenv("SERVER_IP", "localhost:6878")
-    if not check_server_version(server_ip):
+    api_ip = os.getenv("API_SERVER_IP", server_ip)
+
+    if not check_server_version(api_ip):
         logging.error("Server version check failed. Exiting...")
         send_ntfy_notification(
             "AceStream Link Scraper", "Server version check failed. Exiting..."
