@@ -5,6 +5,16 @@ services:
     ports:
       - "6878:6878"
 
+  manifest-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.manifest # we'll create this below
+    container_name: manifest-proxy
+    ports:
+      - "8888:8080"
+    depends_on:
+      - acestream-proxy
+
   scraper-web:
     image: ghcr.io/yourusername/acestream-link-scraper:latest
     container_name: scraper-web

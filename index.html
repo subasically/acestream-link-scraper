@@ -159,7 +159,9 @@
       const playChannel = (id) => {
         if (!id) return;
         // Use nginx as a proxy for CORS
-        const url = `/ace/manifest.m3u8?id=${id}`;
+        // const url = `/ace/manifest.m3u8?id=${id}`;
+        const url = `https://channels.subasically.me:8888/ace/manifest.m3u8?id=${id}`;
+
         player.src({ src: url, type: 'application/x-mpegURL' });
         player.play();
         history.replaceState({}, '', `?channel=${id}`);
