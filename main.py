@@ -191,6 +191,26 @@ def background_scraper():
         time.sleep(update_interval)
 
 
+def test_hls_rewrite(channel_id="fc5089d8e1519872fdf951779ccbca913acc9bce"):
+    url = f"https://channels.subasically.me/ace/manifest.m3u8?id={channel_id}"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        if "http://channels.subasically.me:6878" in response.text:
+            send_ntfy_notification(
+                "HLS Proxy Check", "❌ Rewrite failed: HTTP URLs still present."
+            )
+            return False
+        else:
+            send_ntfy_notification(
+                "HLS Proxy Check", "✅ Rewrite passed: All stream URLs are HTTPS."
+            )
+            return True
+    except Exception as e:
+        send_ntfy_notification("HLS Proxy Check", f"⚠️ Error checking manifest: {e}")
+        return False
+
+
 def main():
     server_ip = os.getenv("SERVER_IP", "localhost:6878")
     api_ip = os.getenv("API_SERVER_IP", server_ip)
@@ -201,6 +221,9 @@ def main():
             "AceStream Link Scraper", "Server version check failed. Exiting..."
         )
         return
+
+    if not test_hls_rewrite():
+        logging.warning("HLS rewrite test failed. Proceeding anyway...")
 
     # Run the scraper in the main thread
     background_scraper()
