@@ -18,7 +18,7 @@ def check_server_version(server_ip, max_retries=30, timeout=5):
     for attempt in range(max_retries):
         try:
             version_check_url = (
-                f"http://{server_ip}/webui/api/service?method=get_version"
+                f"https://{server_ip}/webui/api/service?method=get_version"
             )
             response = requests.get(version_check_url, timeout=timeout)
             response.raise_for_status()  # Raise an exception for HTTP errors
