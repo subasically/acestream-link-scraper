@@ -108,7 +108,7 @@ def fetch_tvmaze_info(channels_json, output_json="tvmaze.json"):
 def generate_playlist_and_json(
     acestream_data, playlist_filename, json_filename, server_ip
 ):
-    base_url = f"http://{server_ip}/ace/getstream?id="
+    base_url = f"https://{server_ip}/ace/getstream?id="
     # Deduplicate by AceStream ID, keep first occurrence
     seen = set()
     deduped = []
