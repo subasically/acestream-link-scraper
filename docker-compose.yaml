@@ -20,10 +20,10 @@ services:
     container_name: scraper-web
     environment:
       - UPDATE_INTERVAL=4320
-      - SERVER_IP=channels.subasically.me/ace
+      - SERVER_IP=${SERVER_IP}
       - API_SERVER_IP=acestream-proxy:6878
       - SEARCH_QUERIES=[UK],[US],DAZN,Eleven,ESPN,Bein,Arena Sport,EuroSport,Nova Sport,polsat sport
-      - TVMAZE_API_KEY=1OWvzHAsenxHdrOOV-kFNzf27Hy06ISe
+      - TVMAZE_API_KEY=${TVMAZE_API_KEY}
     ports:
       - "8500:80"
     depends_on:
