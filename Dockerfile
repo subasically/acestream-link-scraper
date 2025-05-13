@@ -1,34 +1,34 @@
-# Use the official Python image from the Docker Hub
-FROM python:alpine
+FROM python:3.12-slim
 
-# Install nginx and supervisor
-RUN apk add --no-cache nginx supervisor
+ENV PYTHONUNBUFFERED=1 \
+    FLASK_APP=proxy.py
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+# Install all dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    nginx \
+    curl \
+    build-essential \
+    supervisor && \
+    rm -rf /var/lib/apt/lists/*
 
-# Create a working directory
+# Install Python packages
+RUN pip install --no-cache-dir \
+    flask \
+    requests \
+    beautifulsoup4
+
+# Set up app directory and Nginx root
 WORKDIR /app
+COPY main.py proxy.py ntfy.py index.html supervisord.conf nginx.conf ./
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt ./
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Point Nginx to /app as its web root
+RUN mkdir -p /var/www/html && \
+    ln -s /app/index.html /var/www/html/index.html
 
-# Copy the rest of the application
-COPY . .
+# Expose ports
+# 8500 for static UI, 8888 for manifest proxy
+EXPOSE 8500 8888
 
-# Copy nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Copy supervisor config
-COPY supervisord.conf /etc/supervisord.conf
-
-# Make nginx log dir
-RUN mkdir -p /run/nginx
-
-# Expose ports: 80 for nginx, 6878 for AceStream proxy (if needed)
-EXPOSE 80
-
-# Run the application using supervisord
+# Launch all services
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

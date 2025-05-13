@@ -27,8 +27,10 @@ services:
       - API_SERVER_IP=acestream-proxy:6878
       - SEARCH_QUERIES=[UK],[US],DAZN,Eleven,ESPN,Bein,Arena Sport,EuroSport,Nova Sport,polsat sport
       - TVMAZE_API_KEY=${TVMAZE_API_KEY}
+      - FLASK_APP=proxy.py
     ports:
-      - "8500:80"
+      - "8500:80" # scraper UI
+      - "8888:8080" # manifest proxy
     depends_on:
       - acestream-proxy
 
