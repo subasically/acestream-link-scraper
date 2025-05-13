@@ -10,6 +10,9 @@ services:
       context: .
       dockerfile: Dockerfile.manifest
     container_name: manifest-proxy
+    command: flask run --host=0.0.0.0 --port=8080
+    environment:
+      - FLASK_APP=proxy.py
     ports:
       - "8888:8080"
     depends_on:
