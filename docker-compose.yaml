@@ -1,10 +1,4 @@
 services:
-  acestream-proxy:
-    image: ghcr.io/martinbjeldbak/acestream-http-proxy
-    container_name: acestream-http-proxy
-    ports:
-      - "6878:6878"
-
   scraper-web:
     image: ghcr.io/subasically/acestream-link-scraper:latest
     container_name: scraper-web
@@ -20,7 +14,8 @@ services:
       - "8888:8080" # manifest proxy
     depends_on:
       - acestream-proxy
-
-networks:
-  default:
-    driver: bridge
+  acestream-proxy:
+    image: ghcr.io/martinbjeldbak/acestream-http-proxy
+    container_name: acestream-http-proxy
+    ports:
+      - "6878:6878"

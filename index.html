@@ -154,7 +154,9 @@
       // Fetch TVmaze info
       fetch('tvmaze.json')
         .then(res => res.json())
-        .then(data => { tvmazeData = data; });
+        .then(data => { tvmazeData = data; })
+        .catch(() => { console.warn('tvmaze.json not found'); });
+
 
       const playChannel = (id) => {
         if (!id) return;
