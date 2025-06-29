@@ -173,11 +173,11 @@ def background_scraper():
                 all_channels.extend(acestream_data)
         if all_channels:
             generate_playlist_and_json(
-                all_channels, "playlist.m3u8", "channels.json", server_ip
+                all_channels, "data/playlist.m3u8", "data/channels.json", server_ip
             )
             update_index_html(server_ip)
             logging.info(
-                f"\nGenerated playlist.m3u8, channels.json, and updated index.html with {len(all_channels)} entries."
+                f"\nGenerated data/playlist.m3u8, data/channels.json, and updated index.html with {len(all_channels)} entries."
             )
         else:
             logging.info("No channels found for any query.")
