@@ -63,3 +63,51 @@ def proxy_manifest():
         logging.error(error_msg)
         send_ntfy_notification("Manifest Proxy Error", error_msg)
         return error_msg, 500
+
+
+@app.route("/ace/<path:subpath>")
+def proxy_ace_content(subpath):
+    """Proxy all other AceStream content (m3u8 playlists, ts segments, etc.)"""
+    
+    try:
+        # Forward the request to the AceStream proxy
+        url = f"{ACESTREAM_ORIGIN}/ace/{subpath}"
+        logging.info(f"Proxying content: {url}")
+        
+        # Forward query parameters if any
+        if request.query_string:
+            url += f"?{request.query_string.decode()}"
+        
+        resp = requests.get(url, timeout=10, stream=True)
+        resp.raise_for_status()
+        
+        # Determine content type
+        content_type = resp.headers.get('Content-Type', 'application/octet-stream')
+        
+        # If it's an m3u8 file, rewrite URLs
+        if '.m3u8' in subpath or 'mpegurl' in content_type:
+            scheme = request.headers.get('X-Forwarded-Proto', request.scheme)
+            host = request.host
+            proxy_base = f"{scheme}://{host}/ace"
+            
+            content = resp.text
+            content = content.replace("http://acestream-proxy:6878/ace/", f"{proxy_base}/")
+            content = content.replace("http://localhost:6878/ace/", f"{proxy_base}/")
+            
+            return Response(
+                content,
+                content_type="application/vnd.apple.mpegurl",
+                headers={"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+            )
+        else:
+            # For video segments, stream them directly
+            return Response(
+                resp.iter_content(chunk_size=8192),
+                content_type=content_type,
+                headers={"Access-Control-Allow-Origin": "*"},
+            )
+            
+    except Exception as e:
+        error_msg = f"Error proxying {subpath}: {str(e)}"
+        logging.error(error_msg)
+        return error_msg, 500
