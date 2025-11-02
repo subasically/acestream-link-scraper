@@ -160,9 +160,9 @@
 
       const playChannel = (id) => {
         if (!id) return;
-        // Use nginx as a proxy for CORS
-        // const url = `/ace/manifest.m3u8?id=${id}`;
-        const url = `https://channels.subasically.me:8888/ace/manifest.m3u8?id=${id}`;
+        // Use relative URL to proxy through same server on port 8888
+        const proxyPort = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? ':8888' : ':8888';
+        const url = `${window.location.protocol}//${window.location.hostname}${proxyPort}/ace/manifest.m3u8?id=${id}`;
 
         player.src({ src: url, type: 'application/x-mpegURL' });
         player.play();
