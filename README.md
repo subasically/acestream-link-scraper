@@ -108,3 +108,20 @@ The Flask proxy on port 8888 is critical for secure playback - it intercepts HLS
 - The scraper runs continuously and updates playlists based on `UPDATE_INTERVAL`
 - Notifications are sent via ntfy.sh when scraping completes or errors occur
 - Channel mapping can be customized in `tvmaze_channel_map.json` to improve metadata matching
+
+## Troubleshooting
+
+### "The media could not be loaded" error
+- **Check if Flask proxy is running**: The proxy on port 8888 must be running for video playback to work
+- **Verify containers are up**: Run `docker-compose ps` to ensure both `scraper-web` and `acestream-proxy` are running
+- **Check logs**: Run `docker-compose logs scraper-web` to see if there are any errors
+- **Rebuild image**: If you pulled the latest code, rebuild with `docker-compose up -d --build`
+
+### Port 8500 shows default nginx page
+- Ensure you've rebuilt the image after pulling the latest changes
+- Check that `index.html` exists in the container: `docker exec scraper-web ls -la /app/index.html`
+
+### No channels appear in the dropdown
+- Wait a few seconds for the scraper to complete its first run
+- Check that `data/channels.json` was created: `docker exec scraper-web ls -la /app/data/`
+- Review scraper logs for errors: `docker-compose logs scraper-web | grep ERROR`
